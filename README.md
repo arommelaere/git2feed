@@ -17,6 +17,8 @@ This tool helps you create and maintain update logs for your project based on Gi
 
 ```bash
 npm i -D git2feed
+yarn add -D git2feed
+pnpm add -D git2feed
 ```
 
 ## Usage
@@ -26,21 +28,85 @@ npm i -D git2feed
 Add this to your build script:
 
 ```bash
-npx git2feed
+npx git2feed      # npm
+yarn git2feed     # yarn
+pnpm exec git2feed  # pnpm
 ```
 
-### With Options
+### Examples
+
+#### Display updates from the last month
 
 ```bash
-npx git2feed --site https://example.com --max 100
+npx git2feed --since "1 month ago"     # npm
+yarn git2feed --since "1 month ago"    # yarn
+pnpm exec git2feed --since "1 month ago"  # pnpm
 ```
 
-### Strip Branch Names
-
-To remove branch names from commit messages (e.g., `[master]: Update typo` → `Update typo`):
+#### Limit to the last 10 commits
 
 ```bash
-npx git2feed --strip-branch
+npx git2feed --max 10      # npm
+yarn git2feed --max 10     # yarn
+pnpm exec git2feed --max 10  # pnpm
+```
+
+#### Specify output directory
+
+```bash
+npx git2feed --out ./static/updates      # npm
+yarn git2feed --out ./static/updates     # yarn
+pnpm exec git2feed --out ./static/updates  # pnpm
+```
+
+#### Strip branch names from commit messages
+
+```bash
+npx git2feed --strip-branch      # npm
+yarn git2feed --strip-branch     # yarn
+pnpm exec git2feed --strip-branch  # pnpm
+```
+
+#### Set site URL for RSS feed
+
+```bash
+npx git2feed --site https://example.com      # npm
+yarn git2feed --site https://example.com     # yarn
+pnpm exec git2feed --site https://example.com  # pnpm
+```
+
+#### Only include commits containing "feature" or "fix"
+
+```bash
+npx git2feed --keep "(feature|fix)"      # npm
+yarn git2feed --keep "(feature|fix)"     # yarn
+pnpm exec git2feed --keep "(feature|fix)"  # pnpm
+```
+
+#### Combine multiple options
+
+```bash
+npx git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago"      # npm
+yarn git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago"     # yarn
+pnpm exec git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago"  # pnpm
+```
+
+### Integration with build scripts
+
+#### Next.js (package.json)
+
+```json
+"scripts": {
+  "build": "next build && npx git2feed --strip-branch --site https://mysite.com"
+}
+```
+
+#### Astro (package.json)
+
+```json
+"scripts": {
+  "build": "astro build && npx git2feed --max 50 --site https://mysite.com"
+}
 ```
 
 ### Programmatic Usage
@@ -100,6 +166,10 @@ Three files are generated in the output directory:
 Plus an additional index file:
 
 - `updates.index.json` - Tracks processed commit hashes to avoid duplicates
+
+## Author
+
+Created by [Aurélien Rommelaere](https://arommelaere.com). Check out more of my projects and tools at [arommelaere.com](https://arommelaere.com).
 
 ## License
 

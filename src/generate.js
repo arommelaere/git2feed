@@ -1,3 +1,10 @@
+/**
+ * git2feed - Generate updates.txt, JSON and RSS from git commits
+ *
+ * @author Aurélien Rommelaere <https://arommelaere.com>
+ * @license MIT
+ */
+
 import fs from "fs";
 import path from "path";
 import simpleGit from "simple-git";
@@ -141,7 +148,7 @@ export async function generateUpdates(options = {}) {
       id: siteUrl ? `${siteUrl}/updates` : "updates",
       link: siteUrl ? `${siteUrl}/updates` : "/updates",
       updated: new Date(),
-      generator: "git2feed",
+      generator: "git2feed by Aurélien Rommelaere (https://arommelaere.com)",
     });
 
     for (const it of items) {

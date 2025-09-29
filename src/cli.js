@@ -1,4 +1,12 @@
 #!/usr/bin/env node
+
+/**
+ * git2feed CLI - Generate updates.txt, JSON and RSS from git commits
+ *
+ * @author Aurélien Rommelaere <https://arommelaere.com>
+ * @license MIT
+ */
+
 import { generateUpdates } from "./generate.js";
 
 function arg(name, fallback = null) {
@@ -38,6 +46,8 @@ Options:
   --keep <regex>   Regex pattern for keeping commits (overrides default filter)
   --strip-branch   Remove branch names from commit messages (e.g. "[branch]: Message" → "Message")
   --help, -h       Show this help message
+
+Created by Aurélien Rommelaere (https://arommelaere.com)
 `);
   process.exit(0);
 }

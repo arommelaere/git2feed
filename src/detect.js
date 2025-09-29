@@ -1,3 +1,10 @@
+/**
+ * git2feed - Framework detection module
+ *
+ * @author Aurélien Rommelaere <https://arommelaere.com>
+ * @license MIT
+ */
+
 import fs from "fs";
 import path from "path";
 
