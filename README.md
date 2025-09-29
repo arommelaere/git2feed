@@ -1,11 +1,11 @@
-# git-updates-feed
+# git2feed
 
 Generate `updates.txt`, `updates.json`, and `updates.rss` from Git commits at build time.
 
 ## Install
 
 ```bash
-npm i -D git-updates-feed
+npm i -D git2feed
 ```
 
 Auto-detects output dir:
