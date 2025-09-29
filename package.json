@@ -14,6 +14,11 @@
         "README.md",
         "LICENSE"
     ],
+    "scripts": {
+        "start": "node src/cli.js",
+        "test": "node test/test.js",
+        "postinstall": "chmod +x src/cli.js"
+    },
     "dependencies": {
         "date-fns": "^4.1.0",
         "feed": "^4.2.2",
@@ -36,5 +41,13 @@
         "gatsby"
     ],
     "author": "Aurelien Rommelaere",
-    "license": "MIT"
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/username/git2feed.git"
+    },
+    "bugs": {
+        "url": "https://github.com/username/git2feed/issues"
+    },
+    "homepage": "https://github.com/username/git2feed#readme"
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Project Updates</title>
+        <link>/updates</link>
+        <description>undefined</description>
+        <lastBuildDate>Mon, 29 Sep 2025 10:46:42 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>git2feed</generator>
+        <item>
+            <title><![CDATA[2025-09-29]]></title>
+            <link>/updates</link>
+            <guid>/updates#2025-09-29</guid>
+            <pubDate>Mon, 29 Sep 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[• [master]: Update typo
+• []: Initial commit]]></description>
+        </item>
+    </channel>
+</rss>
