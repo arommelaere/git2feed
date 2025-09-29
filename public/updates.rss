@@ -4,7 +4,7 @@
         <title>Project Updates</title>
         <link>/updates</link>
         <description>undefined</description>
-        <lastBuildDate>Mon, 29 Sep 2025 10:46:42 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 29 Sep 2025 10:52:53 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>git2feed</generator>
         <item>
@@ -12,8 +12,10 @@
             <link>/updates</link>
             <guid>/updates#2025-09-29</guid>
             <pubDate>Mon, 29 Sep 2025 00:00:00 GMT</pubDate>
-            <description><![CDATA[• [master]: Update typo
-• []: Initial commit]]></description>
+            <description><![CDATA[• Update version
+• Fix all known issues
+• Update typo
+• Initial commit]]></description>
         </item>
     </channel>
 </rss>

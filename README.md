@@ -11,6 +11,7 @@ This tool helps you create and maintain update logs for your project based on Gi
 - Multiple output formats: text, JSON, and RSS
 - Keeps track of processed commits to avoid duplicates
 - Works with all major JavaScript frameworks (Next.js, Remix, Astro, etc.)
+- Option to strip branch names from commit messages
 
 ## Install
 
@@ -34,6 +35,14 @@ npx git2feed
 npx git2feed --site https://example.com --max 100
 ```
 
+### Strip Branch Names
+
+To remove branch names from commit messages (e.g., `[master]: Update typo` → `Update typo`):
+
+```bash
+npx git2feed --strip-branch
+```
+
 ### Programmatic Usage
 
 ```javascript
@@ -43,6 +52,7 @@ async function main() {
   const result = await generateUpdates({
     siteUrl: "https://example.com",
     maxCount: 100,
+    stripBranch: true,
   });
 
   console.log(`Generated updates in ${result.outDir}`);
@@ -53,15 +63,16 @@ main().catch(console.error);
 
 ## Options
 
-| Option       | CLI Flag     | Description                                    | Default            |
-| ------------ | ------------ | ---------------------------------------------- | ------------------ |
-| Root Path    | `--root`     | Repository root path                           | Current directory  |
-| Output Dir   | `--out`      | Output directory (overrides auto-detection)    | Auto-detected      |
-| Site URL     | `--site`     | Site URL for RSS feed                          | Empty or from env  |
-| Max Commits  | `--max`      | Maximum number of commits to process           | 2000               |
-| Since        | `--since`    | Process commits since date (e.g. "1 week ago") | All commits        |
-| Keep Pattern | `--keep`     | Regex pattern for keeping commits              | Non-chore/ci/build |
-| Help         | `--help, -h` | Show help                                      | -                  |
+| Option       | CLI Flag         | Description                                    | Default            |
+| ------------ | ---------------- | ---------------------------------------------- | ------------------ |
+| Root Path    | `--root`         | Repository root path                           | Current directory  |
+| Output Dir   | `--out`          | Output directory (overrides auto-detection)    | Auto-detected      |
+| Site URL     | `--site`         | Site URL for RSS feed                          | Empty or from env  |
+| Max Commits  | `--max`          | Maximum number of commits to process           | 2000               |
+| Since        | `--since`        | Process commits since date (e.g. "1 week ago") | All commits        |
+| Keep Pattern | `--keep`         | Regex pattern for keeping commits              | Non-chore/ci/build |
+| Strip Branch | `--strip-branch` | Remove branch names from commit messages       | false              |
+| Help         | `--help, -h`     | Show help                                      | -                  |
 
 ## Auto-detection of output directories
 

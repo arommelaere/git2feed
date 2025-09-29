@@ -17,6 +17,7 @@ export async function generateUpdates(options = {}) {
     const maxCount = Number(options.maxCount || 2000);
     const since = options.since || null;
     const keepPattern = options.keep || null;
+    const stripBranch = options.stripBranch || false;
 
     // Ensure output directory exists
     if (!fs.existsSync(outDir)) {
@@ -70,6 +71,15 @@ export async function generateUpdates(options = {}) {
       return defaultKeep(m);
     }
 
+    // Function to strip branch name from commit message
+    function processMessage(msg) {
+      if (stripBranch) {
+        // Handle patterns like "[branch]: Message", "[branch] Message", "[branch]:Message"
+        return msg.replace(/^\s*\[[^\]]*\](?:\s*:)?\s*/, "");
+      }
+      return msg;
+    }
+
     const newCommits = log.all.filter(
       (c) => !seen.has(c.hash) && keepMsg(c.message)
     );
@@ -88,7 +98,7 @@ export async function generateUpdates(options = {}) {
       for (const c of newCommits) {
         const d = format(new Date(c.date), "yyyy-MM-dd");
         if (!grouped[d]) grouped[d] = [];
-        grouped[d].push(c.message.trim());
+        grouped[d].push(processMessage(c.message.trim()));
       }
 
       const blocks = Object.entries(grouped)

@@ -1,3 +1,5 @@
 2025-09-29
-- [master]: Update typo
-- []: Initial commit
+- Update version
+- Fix all known issues
+- Update typo
+- Initial commit

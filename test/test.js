@@ -40,6 +40,37 @@ async function runTests() {
       throw new Error("JSON file has incorrect structure");
     }
 
+    // Clean up files for next test
+    fs.unlinkSync(result.txtPath);
+    fs.unlinkSync(result.jsonPath);
+    fs.unlinkSync(result.rssPath);
+    fs.unlinkSync(result.indexPath);
+
+    // Test stripBranch option
+    console.log("\nTesting stripBranch option...");
+    const resultWithStripBranch = await generateUpdates({
+      root,
+      maxCount: 50,
+      stripBranch: true,
+    });
+
+    // Read the first line of updates.txt to check if it contains branch names
+    const txtContent = fs.readFileSync(resultWithStripBranch.txtPath, "utf8");
+    const contentLines = txtContent
+      .split("\n")
+      .filter((line) => line.startsWith("-"));
+
+    // Check if any line contains branch pattern [branch]:
+    const hasBranchPattern = contentLines.some((line) =>
+      /\[[^\]]*\]\s*:/.test(line)
+    );
+
+    if (hasBranchPattern) {
+      throw new Error("Branch names were not stripped correctly");
+    } else {
+      console.log("✅ Branch names stripped correctly");
+    }
+
     console.log("✅ All tests passed!");
   } catch (error) {
     console.error("❌ Test failed:", error.message);
