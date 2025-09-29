@@ -33,6 +33,34 @@ yarn git2feed     # yarn
 pnpm exec git2feed  # pnpm
 ```
 
+### Development Usage
+
+Add these scripts to your package.json for easy local development:
+
+```json
+"scripts": {
+  "updates": "git2feed",
+  "updates:strip": "git2feed --strip-branch",
+  "updates:recent": "git2feed --since \"1 week ago\"",
+  "prepare": "git2feed --strip-branch"
+}
+```
+
+The `prepare` script will automatically run when you run `npm install` in your project, ensuring your update files are always generated before commits.
+
+Then you can run them as needed:
+
+```bash
+# Basic update generation
+npm run updates
+
+# Strip branch names from commit messages
+npm run updates:strip
+
+# Only process commits from the last week
+npm run updates:recent
+```
+
 ### Examples
 
 #### Display updates from the last month

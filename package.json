@@ -1,6 +1,6 @@
 {
     "name": "git2feed",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "description": "Generate updates.txt, JSON and RSS from git commits at build time (auto-detects Next.js and common frameworks)",
     "type": "module",
     "bin": {
@@ -16,6 +16,12 @@
     ],
     "scripts": {
         "start": "node src/cli.js",
+        "dev": "node src/cli.js",
+        "updates": "node src/cli.js",
+        "updates:strip": "node src/cli.js --strip-branch",
+        "updates:recent": "node src/cli.js --since \"1 week ago\"",
+        "updates:all": "node src/cli.js --max 5000",
+        "prepare": "node src/cli.js --strip-branch",
         "test": "node test/test.js",
         "postinstall": "chmod +x src/cli.js"
     },
