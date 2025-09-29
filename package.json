@@ -1,0 +1,40 @@
+{
+    "name": "git-updates-feed",
+    "version": "1.1.0",
+    "description": "Generate updates.txt, JSON and RSS from git commits at build time (auto-detects Next.js and common frameworks)",
+    "type": "module",
+    "bin": {
+        "git-updates-feed": "src/cli.js"
+    },
+    "exports": {
+        ".": "./src/generate.js"
+    },
+    "files": [
+        "src",
+        "README.md",
+        "LICENSE"
+    ],
+    "dependencies": {
+        "date-fns": "^4.1.0",
+        "feed": "^4.2.2",
+        "simple-git": "^3.27.0"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "keywords": [
+        "rss",
+        "feed",
+        "changelog",
+        "git",
+        "updates",
+        "nextjs",
+        "remix",
+        "astro",
+        "sveltekit",
+        "nuxt",
+        "gatsby"
+    ],
+    "author": "Aurelien Rommelaere",
+    "license": "MIT"
+}
