@@ -12,6 +12,7 @@ This tool helps you create and maintain update logs for your project based on Gi
 - Keeps track of processed commits to avoid duplicates
 - Works with all major JavaScript frameworks (Next.js, Remix, Astro, etc.)
 - Option to strip branch names from commit messages
+- Redact or hide confidential terms from commit messages
 
 ## Install
 
@@ -111,12 +112,28 @@ yarn git2feed --keep "(feature|fix)"     # yarn
 pnpm exec git2feed --keep "(feature|fix)"  # pnpm
 ```
 
+#### Replace confidential terms in commit messages
+
+```bash
+npx git2feed --confidential "aws,s3,daisyui"      # npm
+yarn git2feed --confidential "aws,s3,daisyui"     # yarn
+pnpm exec git2feed --confidential "aws,s3,daisyui"  # pnpm
+```
+
+#### Completely hide terms from commit messages
+
+```bash
+npx git2feed --hide "secret,password,key"      # npm
+yarn git2feed --hide "secret,password,key"     # yarn
+pnpm exec git2feed --hide "secret,password,key"  # pnpm
+```
+
 #### Combine multiple options
 
 ```bash
-npx git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago"      # npm
-yarn git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago"     # yarn
-pnpm exec git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago"  # pnpm
+npx git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago" --confidential "aws,api-key"      # npm
+yarn git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago" --confidential "aws,api-key"     # yarn
+pnpm exec git2feed --site https://example.com --max 50 --strip-branch --since "2 weeks ago" --confidential "aws,api-key"  # pnpm
 ```
 
 ### Integration with build scripts
@@ -147,6 +164,8 @@ async function main() {
     siteUrl: "https://example.com",
     maxCount: 100,
     stripBranch: true,
+    confidential: "aws,s3,api-key",
+    hide: "secret,password",
   });
 
   console.log(`Generated updates in ${result.outDir}`);
@@ -166,6 +185,8 @@ main().catch(console.error);
 | Since        | `--since`        | Process commits since date (e.g. "1 week ago") | All commits        |
 | Keep Pattern | `--keep`         | Regex pattern for keeping commits              | Non-chore/ci/build |
 | Strip Branch | `--strip-branch` | Remove branch names from commit messages       | false              |
+| Confidential | `--confidential` | Replace terms with "--confidential--"          | None               |
+| Hide Terms   | `--hide`         | Completely hide terms from messages            | None               |
 | Help         | `--help, -h`     | Show help                                      | -                  |
 
 ## Auto-detection of output directories

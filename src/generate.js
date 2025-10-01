@@ -25,6 +25,12 @@ export async function generateUpdates(options = {}) {
     const since = options.since || null;
     const keepPattern = options.keep || null;
     const stripBranch = options.stripBranch || false;
+    const confidentialItems = options.confidential
+      ? options.confidential.split(",").map((item) => item.trim().toLowerCase())
+      : [];
+    const hideItems = options.hide
+      ? options.hide.split(",").map((item) => item.trim().toLowerCase())
+      : [];
 
     // Ensure output directory exists
     if (!fs.existsSync(outDir)) {
@@ -78,13 +84,29 @@ export async function generateUpdates(options = {}) {
       return defaultKeep(m);
     }
 
-    // Function to strip branch name from commit message
+    // Function to process message text
     function processMessage(msg) {
+      let processed = msg;
+
+      // Strip branch name using improved regex
       if (stripBranch) {
-        // Handle patterns like "[branch]: Message", "[branch] Message", "[branch]:Message"
-        return msg.replace(/^\s*\[[^\]]*\](?:\s*:)?\s*/, "");
+        // Improved regex to handle "[BranchHere]: " pattern
+        processed = processed.replace(/^\s*\[[^\]]*\](?:\s*:)?\s*/, "");
       }
-      return msg;
+
+      // Process confidential terms
+      if (confidentialItems.length > 0) {
+        const confidentialRegex = new RegExp(confidentialItems.join("|"), "gi");
+        processed = processed.replace(confidentialRegex, "--confidential--");
+      }
+
+      // Process hide terms
+      if (hideItems.length > 0) {
+        const hideRegex = new RegExp(hideItems.join("|"), "gi");
+        processed = processed.replace(hideRegex, "");
+      }
+
+      return processed.trim();
     }
 
     const newCommits = log.all.filter(

@@ -28,6 +28,8 @@ const maxCount = arg("--max") ? parseInt(arg("--max"), 10) : null;
 const since = arg("--since") || null;
 const keep = arg("--keep") || null;
 const stripBranch = hasFlag("--strip-branch");
+const confidential = arg("--confidential") || null;
+const hide = arg("--hide") || null;
 
 // Display help if requested
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -38,21 +40,33 @@ Usage:
   git2feed [options]
 
 Options:
-  --root <path>    Repository root path (default: current directory)
-  --out <path>     Output directory (auto-detected based on project type)
-  --site <url>     Site URL for RSS feed (default: empty or from env)
-  --max <num>      Maximum number of commits to process (default: 2000)
-  --since <date>   Process commits since date (e.g. "1 week ago")
-  --keep <regex>   Regex pattern for keeping commits (overrides default filter)
-  --strip-branch   Remove branch names from commit messages (e.g. "[branch]: Message" → "Message")
-  --help, -h       Show this help message
+  --root <path>          Repository root path (default: current directory)
+  --out <path>           Output directory (auto-detected based on project type)
+  --site <url>           Site URL for RSS feed (default: empty or from env)
+  --max <num>            Maximum number of commits to process (default: 2000)
+  --since <date>         Process commits since date (e.g. "1 week ago")
+  --keep <regex>         Regex pattern for keeping commits (overrides default filter)
+  --strip-branch         Remove branch names from commit messages (e.g. "[branch]: Message" → "Message")
+  --confidential <list>  Replace confidential terms with "--confidential--" (comma-separated)
+  --hide <list>          Completely hide specific terms (comma-separated)
+  --help, -h             Show this help message
 
 Created by Aurélien Rommelaere (https://arommelaere.com)
 `);
   process.exit(0);
 }
 
-generateUpdates({ root, outDir, siteUrl, maxCount, since, keep, stripBranch })
+generateUpdates({
+  root,
+  outDir,
+  siteUrl,
+  maxCount,
+  since,
+  keep,
+  stripBranch,
+  confidential,
+  hide,
+})
   .then(({ outDir, txtPath, jsonPath, rssPath }) => {
     console.log(`✅ Successfully generated updates files in ${outDir}:`);
     console.log(`   - ${txtPath}`);
