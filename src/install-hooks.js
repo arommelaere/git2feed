@@ -19,6 +19,7 @@ const defaultConfig = {
   addToCommit: true,
   hookMessage: "# Hook généré automatiquement par git2feed",
   verbose: true,
+  hookTypes: ["pre-commit", "prepare-commit-msg", "post-commit"], // Types de hooks à installer
 };
 
 // Fonction pour lire la configuration
@@ -68,6 +69,9 @@ function installGitHooks() {
       console.log("📁 Création du dossier .git/hooks");
       fs.mkdirSync(gitHooksDir, { recursive: true });
     }
+
+    // Créer un fichier de lock pour éviter les exécutions multiples
+    const lockFile = path.join(currentWorkDir, ".git2feed-lock");
 
     // Déterminer le chemin vers le script git2feed
     let finalCliPath = "";
@@ -132,15 +136,37 @@ function log(message) {
   fs.appendFileSync(logFile, message + '\\n');
 }
 
+// Vérifier si le hook est déjà en cours d'exécution (éviter les boucles infinies)
+const lockFile = path.join(process.cwd(), '.git2feed-lock');
+const hookType = process.argv[2] || 'unknown';
+
+if (fs.existsSync(lockFile)) {
+  const lockTime = new Date(fs.readFileSync(lockFile, 'utf-8'));
+  const now = new Date();
+  const diffMs = now - lockTime;
+  
+  // Si le lock existe depuis moins de 10 secondes, on n'exécute pas le hook
+  if (diffMs < 10000) {
+    console.log(\`git2feed: Hook déjà en cours d'exécution (lock de \${Math.round(diffMs/1000)}s)\`);
+    process.exit(0);
+  } else {
+    // Le lock est ancien, on le supprime
+    fs.unlinkSync(lockFile);
+  }
+}
+
+// Créer un lock
+fs.writeFileSync(lockFile, new Date().toISOString());
+
 // Répertoire de travail
 const workDir = process.cwd();
 const logFile = path.join(workDir, '.git2feed-hook.log');
 
 // Créer ou vider le fichier de log
-fs.writeFileSync(logFile, \`[${new Date().toLocaleString()}] git2feed hook started\\n\`);
+fs.writeFileSync(logFile, \`[${new Date().toLocaleString()}] git2feed hook (\${hookType}) started\\n\`);
 
-log('=== GIT2FEED PRE-COMMIT HOOK ===');
-log('[1/3] Exécution de git2feed avant le commit...');
+log(\`=== GIT2FEED HOOK (\${hookType}) ===\`);
+log('[1/3] Exécution de git2feed avant commit...');
 
 try {
   // Exécuter git2feed
@@ -177,29 +203,39 @@ try {
   }
   
   log('=== GIT2FEED HOOK TERMINÉ ===');
-  process.exit(0);
 } catch (error) {
   log(\`❌ ERREUR: \${error.message}\`);
   log('=== GIT2FEED HOOK TERMINÉ AVEC ERREUR ===');
-  process.exit(1);
+} finally {
+  // Supprimer le lock
+  if (fs.existsSync(lockFile)) {
+    fs.unlinkSync(lockFile);
+  }
 }
+
+// Toujours sortir avec succès pour ne pas bloquer le commit
+process.exit(0);
 `;
 
     fs.writeFileSync(hookHelperPath, hookHelperContent);
     fs.chmodSync(hookHelperPath, "0755");
 
-    // Déterminer si on est sur Windows
-    const isWin = process.platform === "win32";
+    // Installer chaque type de hook
+    const hookTypes = config.hookTypes || defaultConfig.hookTypes;
+    const installedHooks = [];
 
-    // Créer un hook pre-commit identique pour tous les OS
-    // Les hooks sont toujours exécutés avec sh même sur Windows (via Git Bash)
-    const preCommitContent = `#!/bin/sh
-node "${hookHelperPath.replace(/\\/g, "/")}"
+    for (const hookType of hookTypes) {
+      // Créer un hook identique pour tous les OS
+      // Les hooks sont toujours exécutés avec sh même sur Windows (via Git Bash)
+      const hookContent = `#!/bin/sh
+node "${hookHelperPath.replace(/\\/g, "/")}" ${hookType} "$@"
 `;
 
-    const preCommitPath = path.join(gitHooksDir, "pre-commit");
-    fs.writeFileSync(preCommitPath, preCommitContent);
-    fs.chmodSync(preCommitPath, "0755");
+      const hookPath = path.join(gitHooksDir, hookType);
+      fs.writeFileSync(hookPath, hookContent);
+      fs.chmodSync(hookPath, "0755");
+      installedHooks.push(hookType);
+    }
 
     // Vérifier si Git respecte bien les hooks
     try {
@@ -225,7 +261,7 @@ node "${hookHelperPath.replace(/\\/g, "/")}"
     }
 
     console.log("\n✅ Hooks Git installés avec succès");
-    console.log(`📋 Hooks installés: pre-commit`);
+    console.log(`📋 Hooks installés: ${installedHooks.join(", ")}`);
     console.log(`📄 Script helper Node.js: ${hookHelperPath}`);
 
     // Afficher un résumé de la configuration utilisée

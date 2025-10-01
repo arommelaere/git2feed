@@ -1,4 +1,7 @@
 2025-10-01
+- Test if it commits with pre-commit or not
+
+2025-10-01
 - [master]: Test if it works or not with gq
 
 2025-10-01
