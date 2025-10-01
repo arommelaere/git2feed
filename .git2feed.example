@@ -1,0 +1,11 @@
+{
+  "command": "npx git2feed --strip-branch --confidential 'secret,private'",
+  "outputFiles": [
+    "public/updates.txt", 
+    "public/updates.rss", 
+    "public/updates.json", 
+    "public/updates.index.json"
+  ],
+  "addToCommit": true,
+  "hookMessage": "# Hook git2feed personnalisé"
+} 

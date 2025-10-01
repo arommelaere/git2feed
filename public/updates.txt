@@ -1,4 +1,7 @@
 2025-10-01
+- Update README dev usage
+
+2025-10-01
 - Bump version to 1.7.2
 - Change force flag shorthand from -f to --f
 

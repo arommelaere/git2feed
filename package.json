@@ -1,6 +1,6 @@
 {
     "name": "git2feed",
-    "version": "1.7.2",
+    "version": "1.7.3-beta.0",
     "description": "Generate updates.txt, JSON and RSS from git commits at build time (auto-detects Next.js and common frameworks)",
     "type": "module",
     "bin": {
@@ -24,7 +24,8 @@
         "prepare": "node src/cli.js --strip-branch",
         "test": "node test/test.js",
         "test:unit": "node test/test-process.js",
-        "postinstall": "chmod +x src/cli.js"
+        "postinstall": "chmod +x src/cli.js && node src/install-hooks.js",
+        "install-hooks": "node src/install-hooks.js"
     },
     "dependencies": {
         "date-fns": "^4.1.0",

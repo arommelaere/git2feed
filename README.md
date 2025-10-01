@@ -50,6 +50,52 @@ Add these scripts to your package.json for easy local development:
 
 The `prepare` script will automatically run when you run `npm install` in your project, ensuring your update files are always generated before commits.
 
+### Git Hooks Integration
+
+git2feed automatically installs a git pre-commit hook when you install the package. This hook:
+
+1. Runs git2feed before every commit
+2. Adds the generated files to the commit
+
+This ensures your update files are always up-to-date with your latest commits.
+
+If you need to manually install the git hook:
+
+```bash
+npm run install-hooks   # npm
+yarn install-hooks      # yarn
+pnpm run install-hooks  # pnpm
+```
+
+#### Customizing Git Hook
+
+You can customize the git hook by creating a `.git2feed` file in your project root. This is a JSON file with the following options:
+
+```json
+{
+  "command": "npx git2feed --strip-branch --confidential 'secret,private'",
+  "outputFiles": [
+    "public/updates.txt",
+    "public/updates.rss",
+    "public/updates.json",
+    "public/updates.index.json"
+  ],
+  "addToCommit": true,
+  "hookMessage": "# Hook git2feed personnalisé"
+}
+```
+
+Available options:
+
+| Option        | Type     | Default                                                                                            | Description                                                |
+| ------------- | -------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `command`     | string   | `"npx git2feed"`                                                                                   | The command to run before commit                           |
+| `outputFiles` | string[] | `["public/updates.txt", "public/updates.rss", "public/updates.json", "public/updates.index.json"]` | Files to add to the commit                                 |
+| `addToCommit` | boolean  | `true`                                                                                             | Whether to automatically add generated files to the commit |
+| `hookMessage` | string   | `"# Hook généré automatiquement par git2feed"`                                                     | Comment message in the hook file                           |
+
+After modifying the configuration, run `npm run install-hooks` to update the git hook.
+
 Then you can run them as needed:
 
 ```bash
