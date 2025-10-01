@@ -220,6 +220,26 @@ Plus an additional index file:
 
 - `updates.index.json` - Tracks processed commit hashes to avoid duplicates
 
+## Running Tests
+
+The project includes comprehensive tests to ensure all features work correctly:
+
+```bash
+# Run integration tests
+npm test
+
+# Run unit tests for text processing functionality
+npm run test:unit
+```
+
+Unit tests verify:
+
+- Confidential term replacement (with and without spaces)
+- Term hiding (with and without spaces)
+- Branch name stripping
+- Case insensitivity
+- Special character handling
+
 ## Author
 
 Created by [Aurélien Rommelaere](https://arommelaere.com). Check out more of my projects and tools at [arommelaere.com](https://arommelaere.com).
