@@ -4,9 +4,16 @@
         <title>Project Updates</title>
         <link>/updates</link>
         <description>undefined</description>
-        <lastBuildDate>Wed, 01 Oct 2025 09:53:28 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 01 Oct 2025 09:58:40 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>git2feed by Aurélien Rommelaere (https://arommelaere.com)</generator>
+        <item>
+            <title><![CDATA[2025-10-01]]></title>
+            <link>/updates</link>
+            <guid>/updates#2025-10-01</guid>
+            <pubDate>Wed, 01 Oct 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[• fix: simplified pre-commit hook for maximum compatibility]]></description>
+        </item>
         <item>
             <title><![CDATA[2025-10-01]]></title>
             <link>/updates</link>
