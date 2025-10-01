@@ -137,7 +137,7 @@ pnpm exec git2feed --hide "secret,password,key,private token"  # pnpm
 ```bash
 npx git2feed --force      # npm
 yarn git2feed --force     # yarn
-pnpm exec git2feed -f     # pnpm (using shorthand)
+pnpm exec git2feed --f    # pnpm (using shorthand)
 ```
 
 #### Combine multiple options
@@ -200,7 +200,7 @@ main().catch(console.error);
 | Strip Branch | `--strip-branch` | Remove branch names from commit messages                  | false              |
 | Confidential | `--confidential` | Replace terms with "--confidential--" (spaces preserved)  | None               |
 | Hide Terms   | `--hide`         | Completely hide terms from messages (spaces preserved)    | None               |
-| Force Regen  | `--force, -f`    | Force regeneration, ignoring previously processed commits | false              |
+| Force Regen  | `--force, --f`   | Force regeneration, ignoring previously processed commits | false              |
 | Help         | `--help, -h`     | Show help                                                 | -                  |
 
 ## Auto-detection of output directories
