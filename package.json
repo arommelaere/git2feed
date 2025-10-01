@@ -1,6 +1,6 @@
 {
     "name": "git2feed",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "description": "Generate updates.txt, JSON and RSS from git commits at build time (auto-detects Next.js and common frameworks)",
     "type": "module",
     "bin": {
