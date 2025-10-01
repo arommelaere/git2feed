@@ -1,4 +1,7 @@
 2025-10-01
+- fix: improved git hook locking system to prevent multiple executions
+
+2025-10-01
 - fix: added multiple git hooks and lock file to support aliases
 
 2025-10-01
