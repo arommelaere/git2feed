@@ -104,64 +104,27 @@ function installGitHooks() {
 
     // Vérifier si le répertoire .git/hooks existe
     if (fs.existsSync(gitHooksDir)) {
-      // Construire le contenu du hook pre-commit selon la configuration
+      // Générer un script extrêmement simple pour le pre-commit
       const preCommitLines = [
         "#!/bin/bash",
-        config.hookMessage,
         "",
-        "# Force l'affichage même en mode non-interactif",
-        "exec < /dev/tty || true",
-        "FORCE_COLOR=1",
+        "# Script pre-commit généré par git2feed",
+        'echo "=== GIT2FEED PRE-COMMIT HOOK ==="',
+        'echo "[1/3] Exécution de git2feed avant le commit..."',
         "",
-        "# Créer un fichier de log pour debug si nécessaire",
-        "LOG_FILE=$(pwd)/.git2feed-hook.log",
-        "> $LOG_FILE",
+        `# Exécution de la commande git2feed: ${command}`,
+        command,
         "",
-        "# Affichage en couleur et texte simple pour plus de compatibilité",
-        "log() {",
-        '  echo "$@" | tee -a $LOG_FILE',
-        '  echo "$@" >&2',
-        "}",
-        "",
-        "# Initialiser les couleurs s'ils sont supportés",
-        'if [ -t 1 ] || [ -n "$FORCE_COLOR" ]; then',
-        '  GREEN="\\033[0;32m"',
-        '  YELLOW="\\033[0;33m"',
-        '  RED="\\033[0;31m"',
-        '  NC="\\033[0m"',
-        "else",
-        '  GREEN=""',
-        '  YELLOW=""',
-        '  RED=""',
-        '  NC=""',
-        "fi",
-        "",
-        'log "${YELLOW}🔄 git2feed: Exécution automatique avant commit...${NC}"',
-        "",
-        "# S'assurer que Node.js est disponible dans le PATH",
-        'export PATH="$PATH:$(dirname $(which node))"',
-        "",
-        "# Chemin du répertoire de travail actuel",
-        "CURRENT_DIR=$(pwd)",
-        'log "- Working directory: $CURRENT_DIR" >> $LOG_FILE',
-        "",
-        "# Exécuter git2feed",
-        'log "${YELLOW}▶ Exécution: ' + command.replace(/"/g, '\\"') + '${NC}"',
-        'echo "- Commande exécutée: ' +
-          command.replace(/"/g, '\\"') +
-          '" >> $LOG_FILE',
-        command + " | tee -a $LOG_FILE",
-        "",
-        "# Vérifier si l'exécution a réussi",
-        "EXIT_CODE=${PIPESTATUS[0]}",
-        "if [ $EXIT_CODE -ne 0 ]; then",
-        '  log "${RED}❌ Erreur lors de l\'exécution de git2feed (code $EXIT_CODE)${NC}"',
-        '  log "Consultez le fichier de log pour plus de détails: $LOG_FILE"',
+        "# Vérifier si ça a fonctionné",
+        "if [ $? -ne 0 ]; then",
+        '  echo "[!] ERREUR: L\'exécution de git2feed a échoué."',
         "  exit 1",
         "fi",
+        "",
+        'echo "[2/3] Génération des fichiers terminée avec succès."',
       ];
 
-      // Ajouter la commande d'ajout des fichiers au commit si configuré
+      // Ajouter les fichiers générés au commit si configuré
       if (
         config.addToCommit &&
         Array.isArray(config.outputFiles) &&
@@ -170,28 +133,21 @@ function installGitHooks() {
         preCommitLines.push("");
         preCommitLines.push("# Ajouter les fichiers générés au commit");
         preCommitLines.push(
-          'log "${YELLOW}▶ Ajout des fichiers générés au commit${NC}"'
+          'echo "[3/3] Ajout des fichiers générés au commit..."'
         );
-
-        // Construire la commande git add
-        const gitAddCmd = `git add ${config.outputFiles.join(" ")} 2>/dev/null`;
-        preCommitLines.push(gitAddCmd + " >> $LOG_FILE 2>&1");
-
-        // Vérifier le résultat
-        preCommitLines.push("if [ $? -ne 0 ]; then");
         preCommitLines.push(
-          'log "${YELLOW}⚠️ Certains fichiers n\'ont pas pu être ajoutés${NC}"'
+          `git add ${config.outputFiles.join(" ")} 2>/dev/null`
         );
-        preCommitLines.push("fi");
+        preCommitLines.push('echo "=== GIT2FEED HOOK TERMINÉ ===\\n"');
+      } else {
+        preCommitLines.push(
+          'echo "[3/3] Pas de fichiers à ajouter (désactivé dans la configuration)."'
+        );
+        preCommitLines.push('echo "=== GIT2FEED HOOK TERMINÉ ===\\n"');
       }
 
       // Toujours terminer avec succès
-      preCommitLines.push("");
-      preCommitLines.push("# Fin du hook pre-commit");
-      preCommitLines.push(
-        'log "${GREEN}✅ git2feed: Génération des fichiers terminée${NC}"'
-      );
-      preCommitLines.push("exit 0 # Toujours réussir");
+      preCommitLines.push("exit 0");
 
       // Écrire le fichier pre-commit en joignant les lignes avec des retours à la ligne
       const preCommitPath = path.join(gitHooksDir, "pre-commit");
@@ -209,7 +165,6 @@ function installGitHooks() {
       console.log(
         `- Ajout auto au commit: ${config.addToCommit ? "Oui" : "Non"}`
       );
-      console.log(`- Mode verbose: ${config.verbose ? "Oui" : "Non"}`);
     } else {
       console.log(
         "⚠️ Répertoire .git/hooks non trouvé - le hook pre-commit n'a pas été installé"

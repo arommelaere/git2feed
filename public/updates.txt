@@ -1,4 +1,7 @@
 2025-10-01
+- fix: ensure pre-commit hook outputs messages in all environments
+
+2025-10-01
 - fix: improved pre-commit hook with visual feedback
 
 2025-10-01
