@@ -109,29 +109,54 @@ function installGitHooks() {
         "#!/bin/bash",
         config.hookMessage,
         "",
-        "# Affichage en couleur pour plus de lisibilité",
-        'GREEN="\\033[0;32m"',
-        'YELLOW="\\033[0;33m"',
-        'RED="\\033[0;31m"',
-        'NC="\\033[0m" # No Color',
+        "# Force l'affichage même en mode non-interactif",
+        "exec < /dev/tty || true",
+        "FORCE_COLOR=1",
         "",
-        'echo -e "${YELLOW}🔄 git2feed: Exécution automatique avant commit...${NC}"',
+        "# Créer un fichier de log pour debug si nécessaire",
+        "LOG_FILE=$(pwd)/.git2feed-hook.log",
+        "> $LOG_FILE",
+        "",
+        "# Affichage en couleur et texte simple pour plus de compatibilité",
+        "log() {",
+        '  echo "$@" | tee -a $LOG_FILE',
+        '  echo "$@" >&2',
+        "}",
+        "",
+        "# Initialiser les couleurs s'ils sont supportés",
+        'if [ -t 1 ] || [ -n "$FORCE_COLOR" ]; then',
+        '  GREEN="\\033[0;32m"',
+        '  YELLOW="\\033[0;33m"',
+        '  RED="\\033[0;31m"',
+        '  NC="\\033[0m"',
+        "else",
+        '  GREEN=""',
+        '  YELLOW=""',
+        '  RED=""',
+        '  NC=""',
+        "fi",
+        "",
+        'log "${YELLOW}🔄 git2feed: Exécution automatique avant commit...${NC}"',
         "",
         "# S'assurer que Node.js est disponible dans le PATH",
         'export PATH="$PATH:$(dirname $(which node))"',
         "",
         "# Chemin du répertoire de travail actuel",
         "CURRENT_DIR=$(pwd)",
+        'log "- Working directory: $CURRENT_DIR" >> $LOG_FILE',
         "",
         "# Exécuter git2feed",
-        'echo -e "${YELLOW}▶ Exécution: ' +
+        'log "${YELLOW}▶ Exécution: ' + command.replace(/"/g, '\\"') + '${NC}"',
+        'echo "- Commande exécutée: ' +
           command.replace(/"/g, '\\"') +
-          '${NC}"',
-        command,
+          '" >> $LOG_FILE',
+        command + " | tee -a $LOG_FILE",
         "",
         "# Vérifier si l'exécution a réussi",
-        "if [ $? -ne 0 ]; then",
-        '  echo -e "${RED}❌ Erreur lors de l\'exécution de git2feed${NC}"',
+        "EXIT_CODE=${PIPESTATUS[0]}",
+        "if [ $EXIT_CODE -ne 0 ]; then",
+        '  log "${RED}❌ Erreur lors de l\'exécution de git2feed (code $EXIT_CODE)${NC}"',
+        '  log "Consultez le fichier de log pour plus de détails: $LOG_FILE"',
         "  exit 1",
         "fi",
       ];
@@ -145,17 +170,17 @@ function installGitHooks() {
         preCommitLines.push("");
         preCommitLines.push("# Ajouter les fichiers générés au commit");
         preCommitLines.push(
-          'echo -e "${YELLOW}▶ Ajout des fichiers générés au commit${NC}"'
+          'log "${YELLOW}▶ Ajout des fichiers générés au commit${NC}"'
         );
 
         // Construire la commande git add
         const gitAddCmd = `git add ${config.outputFiles.join(" ")} 2>/dev/null`;
-        preCommitLines.push(gitAddCmd);
+        preCommitLines.push(gitAddCmd + " >> $LOG_FILE 2>&1");
 
         // Vérifier le résultat
         preCommitLines.push("if [ $? -ne 0 ]; then");
         preCommitLines.push(
-          '  echo -e "${YELLOW}⚠️ Certains fichiers n\'ont pas pu être ajoutés${NC}"'
+          'log "${YELLOW}⚠️ Certains fichiers n\'ont pas pu être ajoutés${NC}"'
         );
         preCommitLines.push("fi");
       }
@@ -164,7 +189,7 @@ function installGitHooks() {
       preCommitLines.push("");
       preCommitLines.push("# Fin du hook pre-commit");
       preCommitLines.push(
-        'echo -e "${GREEN}✅ git2feed: Génération des fichiers terminée${NC}"'
+        'log "${GREEN}✅ git2feed: Génération des fichiers terminée${NC}"'
       );
       preCommitLines.push("exit 0 # Toujours réussir");
 
@@ -184,6 +209,7 @@ function installGitHooks() {
       console.log(
         `- Ajout auto au commit: ${config.addToCommit ? "Oui" : "Non"}`
       );
+      console.log(`- Mode verbose: ${config.verbose ? "Oui" : "Non"}`);
     } else {
       console.log(
         "⚠️ Répertoire .git/hooks non trouvé - le hook pre-commit n'a pas été installé"
