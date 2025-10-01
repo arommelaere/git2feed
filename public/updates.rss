@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Project Updates</title>
+        <link>/updates</link>
+        <description>undefined</description>
+        <lastBuildDate>Wed, 01 Oct 2025 06:03:56 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>git2feed by Aurélien Rommelaere (https://arommelaere.com)</generator>
+        <item>
+            <title><![CDATA[2025-10-01]]></title>
+            <link>/updates</link>
+            <guid>/updates#2025-10-01</guid>
+            <pubDate>Wed, 01 Oct 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[• Bump version to 1.7.2
+• Change force flag shorthand from -f to --f]]></description>
+        </item>
+        <item>
+            <title><![CDATA[2025-10-01]]></title>
+            <link>/updates</link>
+            <guid>/updates#2025-10-01</guid>
+            <pubDate>Wed, 01 Oct 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[• Bump version to 1.7.1
+• Fix force flag to properly reset the seen commits array
+• Bump version to 1.7.0
+• Add --force and -f options to reset/override all previously processed commits
+• Bump version to 1.6.0
+• [master]: Add --hide and --confidential supports
+• Add testing documentation to README
+• Add test:unit script to package.json
+• Add comprehensive unit tests for text processing functions
+• Update confidential and hide options to preserve spaces in terms
+• Add confidential and hide options, improve strip-branch functionality]]></description>
+        </item>
+        <item>
+            <title><![CDATA[2025-09-29]]></title>
+            <link>/updates</link>
+            <guid>/updates#2025-09-29</guid>
+            <pubDate>Mon, 29 Sep 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[• [master]: Update README for easy command usage
+• [master]: Improve README
+• [master]: Update version
+• [master]: Add strip branch feature
+• [master]: Fix all known issues
+• [master]: Update typo
+• []: Initial commit]]></description>
+        </item>
+    </channel>
+</rss>

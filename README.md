@@ -40,10 +40,11 @@ Add these scripts to your package.json for easy local development:
 
 ```json
 "scripts": {
-  "updates": "git2feed",
-  "updates:strip": "git2feed --strip-branch",
-  "updates:recent": "git2feed --since \"1 week ago\"",
-  "prepare": "git2feed --strip-branch"
+  "g2f": "pnpm exec git2feed --f --confidential 'shadcdn,daisyui,aws' --strip-branch --f",
+  "updates": "pnpm exec git2feed",
+  "updates:strip": "pnpm exec git2feed --strip-branch",
+  "updates:recent": "pnpm exec git2feed --since \"1 week ago\"",
+  "prepare": "pnpm exec  git2feed --strip-branch"
 }
 ```
 

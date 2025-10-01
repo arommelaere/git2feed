@@ -1,0 +1,40 @@
+{
+  "updated_at": "2025-10-01T06:03:56.979Z",
+  "items": [
+    {
+      "date": "2025-10-01",
+      "points": [
+        "Bump version to 1.7.2",
+        "Change force flag shorthand from -f to --f"
+      ]
+    },
+    {
+      "date": "2025-10-01",
+      "points": [
+        "Bump version to 1.7.1",
+        "Fix force flag to properly reset the seen commits array",
+        "Bump version to 1.7.0",
+        "Add --force and -f options to reset/override all previously processed commits",
+        "Bump version to 1.6.0",
+        "[master]: Add --hide and --confidential supports",
+        "Add testing documentation to README",
+        "Add test:unit script to package.json",
+        "Add comprehensive unit tests for text processing functions",
+        "Update confidential and hide options to preserve spaces in terms",
+        "Add confidential and hide options, improve strip-branch functionality"
+      ]
+    },
+    {
+      "date": "2025-09-29",
+      "points": [
+        "[master]: Update README for easy command usage",
+        "[master]: Improve README",
+        "[master]: Update version",
+        "[master]: Add strip branch feature",
+        "[master]: Fix all known issues",
+        "[master]: Update typo",
+        "[]: Initial commit"
+      ]
+    }
+  ]
+}
