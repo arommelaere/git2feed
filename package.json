@@ -23,6 +23,7 @@
         "updates:all": "node src/cli.js --max 5000",
         "prepare": "node src/cli.js --strip-branch",
         "test": "node test/test.js",
+        "test:unit": "node test/test-process.js",
         "postinstall": "chmod +x src/cli.js"
     },
     "dependencies": {
