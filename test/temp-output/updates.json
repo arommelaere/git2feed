@@ -1,0 +1,43 @@
+{
+  "updated_at": "2025-10-01T05:31:45.058Z",
+  "items": [
+    {
+      "date": "2025-10-01",
+      "points": [
+        "Update confidential and hide options to preserve spaces in terms",
+        "Add confidential and hide options, improve strip-branch functionality"
+      ]
+    },
+    {
+      "date": "2025-09-29",
+      "points": [
+        "[master]: Update README for easy command usage",
+        "[master]: Improve README",
+        "[master]: Update version",
+        "[master]: Add strip branch feature",
+        "[master]: Fix all known issues",
+        "[master]: Update typo",
+        "[]: Initial commit"
+      ]
+    },
+    {
+      "date": "2025-01-01",
+      "points": [
+        "Added aws credentials",
+        "Updated the S3 bucket",
+        "Added api key for authentication",
+        "Updated secret token for access",
+        "Added private data to database",
+        "Updated internal code and documentation"
+      ]
+    },
+    {
+      "date": "2024-12-31",
+      "points": [
+        "[feature]: Added new UI components",
+        "[fix]: Fixed critical bug with aws",
+        "Normal content line"
+      ]
+    }
+  ]
+}

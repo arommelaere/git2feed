@@ -1,0 +1,21 @@
+2025-10-01
+- Update confidential and hide options to preserve spaces in terms
+- Add confidential and hide options, improve strip-branch functionality
+
+2025-09-29
+- [master]: Update README for easy command usage
+- [master]: Improve README
+- [master]: Update version
+
+2025-10-01
+- Update confidential and hide options to preserve spaces in terms
+- Add confidential and hide options, improve strip-branch functionality
+
+2025-09-29
+- [master]: Update README for easy command usage
+- [master]: Improve README
+- [master]: Update version
+
+2023-01-01
+- Added aws credentials
+- Updated the S3 bucket
