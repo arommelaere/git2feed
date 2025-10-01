@@ -19,7 +19,7 @@ const defaultConfig = {
   addToCommit: true,
   hookMessage: "# Hook généré automatiquement par git2feed",
   verbose: true,
-  hookTypes: ["pre-commit", "prepare-commit-msg", "post-commit"], // Types de hooks à installer
+  hookTypes: ["pre-commit", "post-commit"], // Types de hooks à installer (on retire prepare-commit-msg qui fait doublon)
 };
 
 // Fonction pour lire la configuration
@@ -129,6 +129,23 @@ function installGitHooks() {
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const crypto = require('crypto');
+
+// Générer un ID de commit unique pour suivre quelle opération a déjà été exécutée
+// Cela permet d'éviter de re-exécuter git2feed plusieurs fois pour un même commit
+let commitId = "";
+try {
+  // Essayer de récupérer le hash du commit en cours ou du dernier commit
+  commitId = execSync('git rev-parse HEAD 2>/dev/null || git rev-parse --verify HEAD~0 2>/dev/null || echo "unknown"', { encoding: 'utf8' }).trim();
+} catch (e) {
+  commitId = crypto.randomBytes(8).toString('hex');
+}
+
+// Répertoire de travail et fichiers
+const workDir = process.cwd();
+const logFile = path.join(workDir, '.git2feed-hook.log');
+const lockFile = path.join(workDir, '.git2feed-lock');
+const commitTrackingFile = path.join(workDir, '.git2feed-last-commit');
 
 // Fonction pour logger
 function log(message) {
@@ -136,39 +153,65 @@ function log(message) {
   fs.appendFileSync(logFile, message + '\\n');
 }
 
-// Vérifier si le hook est déjà en cours d'exécution (éviter les boucles infinies)
-const lockFile = path.join(process.cwd(), '.git2feed-lock');
+// Type de hook (pre-commit, post-commit, etc.)
 const hookType = process.argv[2] || 'unknown';
 
+// Vérifier si on a déjà traité ce commit
+if (fs.existsSync(commitTrackingFile)) {
+  try {
+    const lastCommitData = fs.readFileSync(commitTrackingFile, 'utf-8').trim().split(':');
+    const lastCommitId = lastCommitData[0];
+    const lastTimestamp = parseInt(lastCommitData[1] || '0', 10);
+    const now = Date.now();
+    
+    // Si même commit dans les 60 dernières secondes, on saute l'exécution
+    if (lastCommitId === commitId && (now - lastTimestamp) < 60000) {
+      console.log(\`git2feed: Déjà exécuté pour ce commit il y a \${Math.round((now - lastTimestamp)/1000)}s\`);
+      process.exit(0);
+    }
+  } catch (e) {
+    // Ignorer les erreurs de lecture du fichier
+  }
+}
+
+// Écrire le commit actuel dans le fichier de tracking
+fs.writeFileSync(commitTrackingFile, \`\${commitId}:\${Date.now()}\`);
+
+// Vérifier si le hook est déjà en cours d'exécution
 if (fs.existsSync(lockFile)) {
-  const lockTime = new Date(fs.readFileSync(lockFile, 'utf-8'));
-  const now = new Date();
-  const diffMs = now - lockTime;
-  
-  // Si le lock existe depuis moins de 10 secondes, on n'exécute pas le hook
-  if (diffMs < 10000) {
-    console.log(\`git2feed: Hook déjà en cours d'exécution (lock de \${Math.round(diffMs/1000)}s)\`);
-    process.exit(0);
-  } else {
-    // Le lock est ancien, on le supprime
-    fs.unlinkSync(lockFile);
+  try {
+    const lockData = JSON.parse(fs.readFileSync(lockFile, 'utf-8'));
+    const now = Date.now();
+    
+    // Si le lock existe depuis moins de 30 secondes, on n'exécute pas
+    if ((now - lockData.timestamp) < 30000) {
+      console.log(\`git2feed: Opération déjà en cours (pid \${lockData.pid}, \${Math.round((now - lockData.timestamp)/1000)}s)\`);
+      process.exit(0);
+    } else {
+      // Le lock est ancien, on le remplace
+      fs.unlinkSync(lockFile);
+    }
+  } catch (e) {
+    // Ignorer les erreurs de lecture du fichier de lock
   }
 }
 
 // Créer un lock
-fs.writeFileSync(lockFile, new Date().toISOString());
+fs.writeFileSync(lockFile, JSON.stringify({
+  pid: process.pid,
+  timestamp: Date.now(),
+  hook: hookType,
+  commit: commitId
+}));
 
-// Répertoire de travail
-const workDir = process.cwd();
-const logFile = path.join(workDir, '.git2feed-hook.log');
+// Initialiser le log
+fs.writeFileSync(logFile, \`[${new Date().toLocaleString()}] git2feed hook (\${hookType}) started for commit \${commitId}\\n\`);
 
-// Créer ou vider le fichier de log
-fs.writeFileSync(logFile, \`[${new Date().toLocaleString()}] git2feed hook (\${hookType}) started\\n\`);
-
-log(\`=== GIT2FEED HOOK (\${hookType}) ===\`);
-log('[1/3] Exécution de git2feed avant commit...');
-
+// Exécuter git2feed
 try {
+  log(\`=== GIT2FEED HOOK (\${hookType}) ===\`);
+  log('[1/3] Exécution de git2feed...');
+  
   // Exécuter git2feed
   const command = ${JSON.stringify(command)};
   log(\`Commande: \${command}\`);

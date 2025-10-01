@@ -1,4 +1,7 @@
 2025-10-01
+- fix: added multiple git hooks and lock file to support aliases
+
+2025-10-01
 - Test if it commits with pre-commit or not
 
 2025-10-01

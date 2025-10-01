@@ -1,6 +1,12 @@
 {
-  "updated_at": "2025-10-01T10:41:09.525Z",
+  "updated_at": "2025-10-01T10:42:57.569Z",
   "items": [
+    {
+      "date": "2025-10-01",
+      "points": [
+        "fix: added multiple git hooks and lock file to support aliases"
+      ]
+    },
     {
       "date": "2025-10-01",
       "points": [
