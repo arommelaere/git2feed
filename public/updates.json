@@ -1,6 +1,12 @@
 {
-  "updated_at": "2025-10-01T09:37:29.216Z",
+  "updated_at": "2025-10-01T09:44:45.815Z",
   "items": [
+    {
+      "date": "2025-10-01",
+      "points": [
+        "feat: add git2feed install command and fix pre-commit hook paths"
+      ]
+    },
     {
       "date": "2025-10-01",
       "points": [

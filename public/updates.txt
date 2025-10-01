@@ -1,4 +1,7 @@
 2025-10-01
+- feat: add git2feed install command and fix pre-commit hook paths
+
+2025-10-01
 - feat: add git pre-commit hook with customizable configuration system
 
 2025-10-01

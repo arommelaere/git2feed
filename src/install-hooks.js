@@ -17,6 +17,7 @@ const defaultConfig = {
   ],
   addToCommit: true,
   hookMessage: "# Hook généré automatiquement par git2feed",
+  verbose: true,
 };
 
 // Fonction pour lire la configuration
@@ -107,9 +108,32 @@ function installGitHooks() {
       const preCommitLines = [
         "#!/bin/bash",
         config.hookMessage,
-        "# Exécute git2feed avant le commit pour générer les fichiers d'updates",
-        'export PATH="$PATH:$(dirname $(which node))"', // Ajouter node au PATH
+        "",
+        "# Affichage en couleur pour plus de lisibilité",
+        'GREEN="\\033[0;32m"',
+        'YELLOW="\\033[0;33m"',
+        'RED="\\033[0;31m"',
+        'NC="\\033[0m" # No Color',
+        "",
+        'echo -e "${YELLOW}🔄 git2feed: Exécution automatique avant commit...${NC}"',
+        "",
+        "# S'assurer que Node.js est disponible dans le PATH",
+        'export PATH="$PATH:$(dirname $(which node))"',
+        "",
+        "# Chemin du répertoire de travail actuel",
+        "CURRENT_DIR=$(pwd)",
+        "",
+        "# Exécuter git2feed",
+        'echo -e "${YELLOW}▶ Exécution: ' +
+          command.replace(/"/g, '\\"') +
+          '${NC}"',
         command,
+        "",
+        "# Vérifier si l'exécution a réussi",
+        "if [ $? -ne 0 ]; then",
+        '  echo -e "${RED}❌ Erreur lors de l\'exécution de git2feed${NC}"',
+        "  exit 1",
+        "fi",
       ];
 
       // Ajouter la commande d'ajout des fichiers au commit si configuré
@@ -119,16 +143,30 @@ function installGitHooks() {
         config.outputFiles.length > 0
       ) {
         preCommitLines.push("");
-        preCommitLines.push("# Ajoute les fichiers générés au commit");
+        preCommitLines.push("# Ajouter les fichiers générés au commit");
         preCommitLines.push(
-          `git add ${config.outputFiles.join(" ")} 2>/dev/null`
+          'echo -e "${YELLOW}▶ Ajout des fichiers générés au commit${NC}"'
         );
+
+        // Construire la commande git add
+        const gitAddCmd = `git add ${config.outputFiles.join(" ")} 2>/dev/null`;
+        preCommitLines.push(gitAddCmd);
+
+        // Vérifier le résultat
+        preCommitLines.push("if [ $? -ne 0 ]; then");
+        preCommitLines.push(
+          '  echo -e "${YELLOW}⚠️ Certains fichiers n\'ont pas pu être ajoutés${NC}"'
+        );
+        preCommitLines.push("fi");
       }
 
       // Toujours terminer avec succès
+      preCommitLines.push("");
+      preCommitLines.push("# Fin du hook pre-commit");
       preCommitLines.push(
-        "exit 0 # Toujours réussir même si certaines commandes échouent"
+        'echo -e "${GREEN}✅ git2feed: Génération des fichiers terminée${NC}"'
       );
+      preCommitLines.push("exit 0 # Toujours réussir");
 
       // Écrire le fichier pre-commit en joignant les lignes avec des retours à la ligne
       const preCommitPath = path.join(gitHooksDir, "pre-commit");
