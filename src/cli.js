@@ -30,6 +30,7 @@ const keep = arg("--keep") || null;
 const stripBranch = hasFlag("--strip-branch");
 const confidential = arg("--confidential") || null;
 const hide = arg("--hide") || null;
+const force = hasFlag("--force") || hasFlag("-f");
 
 // Display help if requested
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -49,6 +50,7 @@ Options:
   --strip-branch         Remove branch names from commit messages (e.g. "[branch]: Message" → "Message")
   --confidential <list>  Replace confidential terms with "--confidential--" (comma-separated)
   --hide <list>          Completely hide specific terms (comma-separated)
+  --force, -f            Force regeneration of all files, ignoring previously processed commits
   --help, -h             Show this help message
 
 Created by Aurélien Rommelaere (https://arommelaere.com)
@@ -66,6 +68,7 @@ generateUpdates({
   stripBranch,
   confidential,
   hide,
+  force,
 })
   .then(({ outDir, txtPath, jsonPath, rssPath }) => {
     console.log(`✅ Successfully generated updates files in ${outDir}:`);

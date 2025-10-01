@@ -151,6 +151,11 @@ function runTests() {
     );
     passed++;
 
+    // Note: The force option is handled in the generateUpdates function and doesn't
+    // directly affect the processMessage function. It controls whether to rebuild all files
+    // and ignore previously seen commits. We can't test it here effectively, but it would
+    // be tested in integration tests.
+
     console.log(`\n🎉 All ${passed} tests passed!`);
   } catch (error) {
     failed++;

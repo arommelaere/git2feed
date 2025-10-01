@@ -37,6 +37,7 @@ export async function generateUpdates(options = {}) {
           .map((item) => item.toLowerCase())
           .filter(Boolean)
       : [];
+    const force = options.force || false;
 
     // Ensure output directory exists
     if (!fs.existsSync(outDir)) {
@@ -50,8 +51,32 @@ export async function generateUpdates(options = {}) {
 
     // Initialize files if they don't exist
     if (!fs.existsSync(TXT)) fs.writeFileSync(TXT, "");
-    if (!fs.existsSync(INDEX_FILE))
+
+    // Initialize or reset index file based on force flag
+    if (!fs.existsSync(INDEX_FILE) || force) {
       fs.writeFileSync(INDEX_FILE, JSON.stringify({ seen: [] }, null, 2));
+
+      // If force flag is set, also reset the output files
+      if (force) {
+        if (fs.existsSync(TXT)) fs.writeFileSync(TXT, "");
+        if (fs.existsSync(JSON_FILE))
+          fs.writeFileSync(
+            JSON_FILE,
+            JSON.stringify(
+              { updated_at: new Date().toISOString(), items: [] },
+              null,
+              2
+            )
+          );
+        if (fs.existsSync(RSS_FILE)) fs.writeFileSync(RSS_FILE, "");
+
+        if (force) {
+          console.log(
+            "🔄 Force flag detected: Resetting all previously processed commits..."
+          );
+        }
+      }
+    }
 
     // Get git log
     const git = simpleGit(root);
@@ -100,7 +125,7 @@ export async function generateUpdates(options = {}) {
         processed = processed.replace(/^\s*\[[^\]]*\](?:\s*:)?\s*/, "");
       }
 
-      // Process confidential terms - use word boundaries to match exact terms with spaces
+      // Process confidential terms
       if (confidentialItems.length > 0) {
         for (const term of confidentialItems) {
           // Escape regex special characters
@@ -110,7 +135,7 @@ export async function generateUpdates(options = {}) {
         }
       }
 
-      // Process hide terms - use word boundaries to match exact terms with spaces
+      // Process hide terms
       if (hideItems.length > 0) {
         for (const term of hideItems) {
           // Escape regex special characters
@@ -123,13 +148,14 @@ export async function generateUpdates(options = {}) {
       return processed.trim();
     }
 
-    const newCommits = log.all.filter(
-      (c) => !seen.has(c.hash) && keepMsg(c.message)
-    );
+    // Filter commits by keeping pattern and whether they've been seen before (unless force is true)
+    const newCommits = force
+      ? log.all.filter((c) => keepMsg(c.message))
+      : log.all.filter((c) => !seen.has(c.hash) && keepMsg(c.message));
 
     let txt = "";
     try {
-      txt = fs.readFileSync(TXT, "utf8").trim();
+      txt = force ? "" : fs.readFileSync(TXT, "utf8").trim();
     } catch (err) {
       // If file doesn't exist or can't be read, start with empty string
       txt = "";
