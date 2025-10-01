@@ -1,6 +1,6 @@
 {
     "name": "git2feed",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "description": "Generate updates.txt, JSON and RSS from git commits at build time (auto-detects Next.js and common frameworks)",
     "type": "module",
     "bin": {
@@ -54,7 +54,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/arommelaere/git2feed.git"
+        "url": "git+https://github.com/arommelaere/git2feed.git"
     },
     "bugs": {
         "url": "https://github.com/arommelaere/git2feed/issues"
