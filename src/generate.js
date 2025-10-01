@@ -70,11 +70,9 @@ export async function generateUpdates(options = {}) {
           );
         if (fs.existsSync(RSS_FILE)) fs.writeFileSync(RSS_FILE, "");
 
-        if (force) {
-          console.log(
-            "🔄 Force flag detected: Resetting all previously processed commits..."
-          );
-        }
+        console.log(
+          "🔄 Force flag detected: Resetting all previously processed commits..."
+        );
       }
     }
 
@@ -90,15 +88,20 @@ export async function generateUpdates(options = {}) {
     if (since) logOpts.since = since;
     const log = await git.log(logOpts);
 
-    // Load previously seen commits
-    let indexData;
-    try {
-      indexData = JSON.parse(fs.readFileSync(INDEX_FILE, "utf8"));
-    } catch (err) {
-      indexData = { seen: [] };
+    // Load previously seen commits (or use empty array if force is enabled)
+    let seen;
+    if (force) {
+      // When force is true, ignore all previously seen commits
+      seen = new Set();
+    } else {
+      let indexData;
+      try {
+        indexData = JSON.parse(fs.readFileSync(INDEX_FILE, "utf8"));
+      } catch (err) {
+        indexData = { seen: [] };
+      }
+      seen = new Set(indexData.seen || []);
     }
-
-    const seen = new Set(indexData.seen || []);
 
     // Filter commits to keep
     function defaultKeep(m) {
@@ -180,6 +183,7 @@ export async function generateUpdates(options = {}) {
       txt = blocks + (txt ? "\n\n" + txt : "");
       fs.writeFileSync(TXT, txt.trim() + "\n");
 
+      // Add newly processed commits to the "seen" set
       const updatedSeen = [...seen, ...newCommits.map((c) => c.hash)];
       fs.writeFileSync(
         INDEX_FILE,
