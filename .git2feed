@@ -1,0 +1,10 @@
+{
+    "command": "npx git2feed",
+    "outputFiles": [
+        "public/updates.txt",
+        "public/updates.rss",
+        "public/updates.json"
+    ],
+    "addToCommit": true,
+    "hookMessage": "# Hook simplifié pour test"
+}

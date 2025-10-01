@@ -1,4 +1,7 @@
 2025-10-01
+- fix: simplified pre-commit hook for universal OS compatibility
+
+2025-10-01
 - fix: completely redesigned pre-commit hooks for maximum compatibility
 
 2025-10-01

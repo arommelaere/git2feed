@@ -1,0 +1,13 @@
+[10/1/2025, 10:22:54 AM] git2feed hook started
+=== GIT2FEED PRE-COMMIT HOOK ===
+[1/3] Exécution de git2feed avant le commit...
+Commande: node "E:/wamp64/www/git2feed/src/cli.js"
+✅ Successfully generated updates files in E:\wamp64\www\git2feed\public:
+   - E:\wamp64\www\git2feed\public\updates.txt
+   - E:\wamp64\www\git2feed\public\updates.json
+   - E:\wamp64\www\git2feed\public\updates.rss
+✅    - E:\wamp64\www\git2feed\public\updates.rss
+[2/3] Génération des fichiers terminée avec succès.
+[3/3] Ajout des fichiers générés au commit...
+✅ Fichiers ajoutés au commit
+=== GIT2FEED HOOK TERMINÉ ===
