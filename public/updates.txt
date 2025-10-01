@@ -1,4 +1,7 @@
 2025-10-01
+- feat: add git pre-commit hook with customizable configuration system
+
+2025-10-01
 - Update README dev usage
 
 2025-10-01

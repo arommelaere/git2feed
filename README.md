@@ -62,6 +62,11 @@ This ensures your update files are always up-to-date with your latest commits.
 If you need to manually install the git hook:
 
 ```bash
+npx git2feed install    # npm
+yarn git2feed install   # yarn
+pnpm exec git2feed install  # pnpm
+
+# Alternative method:
 npm run install-hooks   # npm
 yarn install-hooks      # yarn
 pnpm run install-hooks  # pnpm

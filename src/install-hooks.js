@@ -54,6 +54,53 @@ function installGitHooks() {
     const currentWorkDir = process.cwd();
     const gitHooksDir = path.join(currentWorkDir, ".git", "hooks");
 
+    // Déterminer le chemin vers le script git2feed
+    let finalCliPath = "";
+
+    // 1. Chercher dans node_modules (installation normale)
+    const nodeModulesCliPath = path.join(
+      currentWorkDir,
+      "node_modules",
+      "git2feed",
+      "src",
+      "cli.js"
+    );
+
+    // 2. Chercher localement (développement)
+    const localCliPath = path.join(
+      path.dirname(path.dirname(__dirname)),
+      "src",
+      "cli.js"
+    );
+
+    // Déterminer le chemin à utiliser
+    if (fs.existsSync(nodeModulesCliPath)) {
+      finalCliPath = nodeModulesCliPath;
+    } else if (fs.existsSync(localCliPath)) {
+      finalCliPath = localCliPath;
+    } else {
+      // Si on ne trouve pas le fichier, on utilise la commande telle quelle
+      finalCliPath = path.join(__dirname, "cli.js");
+    }
+
+    // Normaliser le chemin pour éviter les problèmes avec les backslashes sous Windows
+    finalCliPath = finalCliPath.replace(/\\/g, "/");
+
+    // Construire la commande avec le chemin absolu
+    let command = config.command;
+    if (command.includes("npx git2feed") || command === "git2feed") {
+      // Extraire les arguments éventuels après git2feed
+      let args = "";
+      if (command.includes("npx git2feed")) {
+        args = command.replace("npx git2feed", "").trim();
+      } else if (command.includes("git2feed")) {
+        args = command.replace("git2feed", "").trim();
+      }
+
+      // Remplacer la commande par le chemin absolu avec les arguments
+      command = `node "${finalCliPath}"${args ? " " + args : ""}`;
+    }
+
     // Vérifier si le répertoire .git/hooks existe
     if (fs.existsSync(gitHooksDir)) {
       // Construire le contenu du hook pre-commit selon la configuration
@@ -61,7 +108,8 @@ function installGitHooks() {
         "#!/bin/bash",
         config.hookMessage,
         "# Exécute git2feed avant le commit pour générer les fichiers d'updates",
-        config.command,
+        'export PATH="$PATH:$(dirname $(which node))"', // Ajouter node au PATH
+        command,
       ];
 
       // Ajouter la commande d'ajout des fichiers au commit si configuré
@@ -93,7 +141,7 @@ function installGitHooks() {
 
       // Afficher un résumé de la configuration utilisée
       console.log("\nConfiguration utilisée:");
-      console.log(`- Commande: ${config.command}`);
+      console.log(`- Commande: ${command}`);
       console.log(`- Fichiers: ${config.outputFiles.join(", ")}`);
       console.log(
         `- Ajout auto au commit: ${config.addToCommit ? "Oui" : "Non"}`

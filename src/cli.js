@@ -8,6 +8,12 @@
  */
 
 import { generateUpdates } from "./generate.js";
+import { promises as fs } from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { execSync } from "child_process";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function arg(name, fallback = null) {
   const i = process.argv.indexOf(name);
@@ -19,6 +25,28 @@ function arg(name, fallback = null) {
 
 function hasFlag(name) {
   return process.argv.includes(name);
+}
+
+// Check if first argument is a command
+const command =
+  process.argv[2] && !process.argv[2].startsWith("-") ? process.argv[2] : null;
+
+// Handle 'install' command
+if (command === "install") {
+  try {
+    // Exécuter le script d'installation des hooks
+    const installScript = path.join(__dirname, "install-hooks.js");
+
+    console.log("🔄 Installation des hooks git...");
+
+    // Exécuter le script install-hooks.js
+    execSync(`node "${installScript}"`, { stdio: "inherit" });
+
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Erreur lors de l'installation des hooks:", error.message);
+    process.exit(1);
+  }
 }
 
 const root = arg("--root") || process.cwd();
@@ -38,8 +66,11 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
 git2feed - Generate updates.txt, JSON and RSS from git commits
 
 Usage:
-  git2feed [options]
+  git2feed [command] [options]
 
+Commands:
+  install             Install git hooks in the current repository
+  
 Options:
   --root <path>          Repository root path (default: current directory)
   --out <path>           Output directory (auto-detected based on project type)
