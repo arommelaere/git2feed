@@ -115,18 +115,22 @@ pnpm exec git2feed --keep "(feature|fix)"  # pnpm
 #### Replace confidential terms in commit messages
 
 ```bash
-npx git2feed --confidential "aws,s3,daisyui"      # npm
-yarn git2feed --confidential "aws,s3,daisyui"     # yarn
-pnpm exec git2feed --confidential "aws,s3,daisyui"  # pnpm
+npx git2feed --confidential "aws,s3,daisyui,api key,secret token"      # npm
+yarn git2feed --confidential "aws,s3,daisyui,api key,secret token"     # yarn
+pnpm exec git2feed --confidential "aws,s3,daisyui,api key,secret token"  # pnpm
 ```
+
+> Note: Spaces within terms are preserved. For example, `"api key"` will be treated as a single term.
 
 #### Completely hide terms from commit messages
 
 ```bash
-npx git2feed --hide "secret,password,key"      # npm
-yarn git2feed --hide "secret,password,key"     # yarn
-pnpm exec git2feed --hide "secret,password,key"  # pnpm
+npx git2feed --hide "secret,password,key,private token"      # npm
+yarn git2feed --hide "secret,password,key,private token"     # yarn
+pnpm exec git2feed --hide "secret,password,key,private token"  # pnpm
 ```
+
+> Note: Spaces within terms are preserved. For example, `"private token"` will be treated as a single term.
 
 #### Combine multiple options
 
@@ -164,8 +168,8 @@ async function main() {
     siteUrl: "https://example.com",
     maxCount: 100,
     stripBranch: true,
-    confidential: "aws,s3,api-key",
-    hide: "secret,password",
+    confidential: "aws,s3,api-key,private token,secret key",
+    hide: "secret,password,internal code",
   });
 
   console.log(`Generated updates in ${result.outDir}`);
@@ -176,18 +180,18 @@ main().catch(console.error);
 
 ## Options
 
-| Option       | CLI Flag         | Description                                    | Default            |
-| ------------ | ---------------- | ---------------------------------------------- | ------------------ |
-| Root Path    | `--root`         | Repository root path                           | Current directory  |
-| Output Dir   | `--out`          | Output directory (overrides auto-detection)    | Auto-detected      |
-| Site URL     | `--site`         | Site URL for RSS feed                          | Empty or from env  |
-| Max Commits  | `--max`          | Maximum number of commits to process           | 2000               |
-| Since        | `--since`        | Process commits since date (e.g. "1 week ago") | All commits        |
-| Keep Pattern | `--keep`         | Regex pattern for keeping commits              | Non-chore/ci/build |
-| Strip Branch | `--strip-branch` | Remove branch names from commit messages       | false              |
-| Confidential | `--confidential` | Replace terms with "--confidential--"          | None               |
-| Hide Terms   | `--hide`         | Completely hide terms from messages            | None               |
-| Help         | `--help, -h`     | Show help                                      | -                  |
+| Option       | CLI Flag         | Description                                              | Default            |
+| ------------ | ---------------- | -------------------------------------------------------- | ------------------ |
+| Root Path    | `--root`         | Repository root path                                     | Current directory  |
+| Output Dir   | `--out`          | Output directory (overrides auto-detection)              | Auto-detected      |
+| Site URL     | `--site`         | Site URL for RSS feed                                    | Empty or from env  |
+| Max Commits  | `--max`          | Maximum number of commits to process                     | 2000               |
+| Since        | `--since`        | Process commits since date (e.g. "1 week ago")           | All commits        |
+| Keep Pattern | `--keep`         | Regex pattern for keeping commits                        | Non-chore/ci/build |
+| Strip Branch | `--strip-branch` | Remove branch names from commit messages                 | false              |
+| Confidential | `--confidential` | Replace terms with "--confidential--" (spaces preserved) | None               |
+| Hide Terms   | `--hide`         | Completely hide terms from messages (spaces preserved)   | None               |
+| Help         | `--help, -h`     | Show help                                                | -                  |
 
 ## Auto-detection of output directories
 

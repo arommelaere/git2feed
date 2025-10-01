@@ -26,10 +26,16 @@ export async function generateUpdates(options = {}) {
     const keepPattern = options.keep || null;
     const stripBranch = options.stripBranch || false;
     const confidentialItems = options.confidential
-      ? options.confidential.split(",").map((item) => item.trim().toLowerCase())
+      ? options.confidential
+          .split(",")
+          .map((item) => item.toLowerCase())
+          .filter(Boolean)
       : [];
     const hideItems = options.hide
-      ? options.hide.split(",").map((item) => item.trim().toLowerCase())
+      ? options.hide
+          .split(",")
+          .map((item) => item.toLowerCase())
+          .filter(Boolean)
       : [];
 
     // Ensure output directory exists
@@ -94,16 +100,24 @@ export async function generateUpdates(options = {}) {
         processed = processed.replace(/^\s*\[[^\]]*\](?:\s*:)?\s*/, "");
       }
 
-      // Process confidential terms
+      // Process confidential terms - use word boundaries to match exact terms with spaces
       if (confidentialItems.length > 0) {
-        const confidentialRegex = new RegExp(confidentialItems.join("|"), "gi");
-        processed = processed.replace(confidentialRegex, "--confidential--");
+        for (const term of confidentialItems) {
+          // Escape regex special characters
+          const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const confidentialRegex = new RegExp(escapedTerm, "gi");
+          processed = processed.replace(confidentialRegex, "--confidential--");
+        }
       }
 
-      // Process hide terms
+      // Process hide terms - use word boundaries to match exact terms with spaces
       if (hideItems.length > 0) {
-        const hideRegex = new RegExp(hideItems.join("|"), "gi");
-        processed = processed.replace(hideRegex, "");
+        for (const term of hideItems) {
+          // Escape regex special characters
+          const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const hideRegex = new RegExp(escapedTerm, "gi");
+          processed = processed.replace(hideRegex, "");
+        }
       }
 
       return processed.trim();
