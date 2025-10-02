@@ -49,6 +49,27 @@ if (command === "install") {
   }
 }
 
+// Handle 'install-endpoint' command
+if (command === "install-endpoint") {
+  try {
+    // Exécuter le script d'installation des endpoints
+    const setupScript = path.join(__dirname, "setup-endpoints.js");
+
+    console.log("🔄 Installation des endpoints dynamiques...");
+
+    // Exécuter le script setup-endpoints.js
+    execSync(`node "${setupScript}"`, { stdio: "inherit" });
+
+    process.exit(0);
+  } catch (error) {
+    console.error(
+      "❌ Erreur lors de l'installation des endpoints:",
+      error.message
+    );
+    process.exit(1);
+  }
+}
+
 const root = arg("--root") || process.cwd();
 const outDir = arg("--out") || null;
 const siteUrl = arg("--site") || null;
@@ -70,6 +91,7 @@ Usage:
 
 Commands:
   install             Install git hooks in the current repository
+  install-endpoint    Install dynamic API endpoints for your framework (Next.js, Express, etc.)
   
 Options:
   --root <path>          Repository root path (default: current directory)

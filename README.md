@@ -13,6 +13,7 @@ This tool helps you create and maintain update logs for your project based on Gi
 - Works with all major JavaScript frameworks (Next.js, Remix, Astro, etc.)
 - Option to strip branch names from commit messages
 - Redact or hide confidential terms from commit messages
+- Dynamic API endpoints for serving updates directly from your webapp
 
 ## Install
 
@@ -49,6 +50,48 @@ Add these scripts to your package.json for easy local development:
 ```
 
 The `prepare` script will automatically run when you run `npm install` in your project, ensuring your update files are always generated before commits.
+
+### Dynamic API Endpoints
+
+git2feed can now provide dynamic API endpoints that serve your updates directly from your web application without requiring pre-generated files.
+
+#### Setting up endpoints
+
+```bash
+npx git2feed install-endpoint    # npm
+yarn git2feed install-endpoint   # yarn
+pnpm exec git2feed install-endpoint  # pnpm
+```
+
+This will automatically detect your framework (Next.js, Express, SvelteKit, Astro, Nuxt) and set up the appropriate endpoints.
+
+#### GitHub API Integration
+
+If you don't want to rely on a local Git repository, you can configure git2feed to fetch commits directly from GitHub's API.
+
+Set the following environment variables in your `.env` file:
+
+```
+GITHUB_TOKEN=your_personal_access_token
+GITHUB_OWNER=your_github_username_or_org
+GITHUB_REPO=your_repository_name
+```
+
+For GitHub tokens, you need to [create a personal access token](https://github.com/settings/tokens) with the `repo` scope.
+
+#### Endpoint URLs
+
+After setting up, your updates are available at:
+
+- `/api/git2feed/txt` - Plain text format
+- `/api/git2feed/json` - JSON format
+- `/api/git2feed/rss` - RSS feed format
+
+You can force a refresh of the cached data by adding the `refresh=true` query parameter:
+
+```
+/api/git2feed/json?refresh=true
+```
 
 ### Git Hooks Integration
 
